@@ -1,0 +1,14 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "620684953042.dkr.ecr.eu-west-3.amazonaws.com/tree-tracker:latest",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": 8501,
+      "HostPort": 8501
+    }
+  ],
+  "Logging": "/var/log/nginx"
+}
