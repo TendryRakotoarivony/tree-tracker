@@ -65,4 +65,7 @@ requirements-dev.txt
 # Other
 .git
 .gitignore
-README.md
+README.md# Elastic Beanstalk Files
+.elasticbeanstalk/*
+.git
+.gitignore
