@@ -59,8 +59,8 @@ docs/_build/
 target/
 
 # Other
-data/
-.env
+!data/
+!.env
 .streamlit/
 Pipfile.lock
 
