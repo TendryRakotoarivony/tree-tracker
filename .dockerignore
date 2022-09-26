@@ -69,5 +69,6 @@ README.md
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
+.platform/*
 .git
 .gitignore
