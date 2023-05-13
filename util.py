@@ -1,8 +1,12 @@
 import os
 import boto3
+from dotenv import load_dotenv, find_dotenv
 
-ACCESS_KEY = 'AKIAZBA5UYXJIQFXBEOU'
-SECRET_KEY = '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'
+# Load environment variables
+_ = load_dotenv(find_dotenv())
+
+ACCESS_KEY = os.getenv('AWS_ACCESS_KEY_ID')
+SECRET_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 
 BUCKET_NAME = 'tree-tracker-store'
 DATA_TYPE = ['drone', 'meteor', 'model', 'parcel', 'planet']
