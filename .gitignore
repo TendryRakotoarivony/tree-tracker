@@ -60,11 +60,13 @@ target/
 
 # Other
 !data/
-!.env
+.env
 .streamlit/
-Pipfile.lock
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/saved_configs
 !.elasticbeanstalk/*.yml
+
+# OS Files
+.DS_Store
