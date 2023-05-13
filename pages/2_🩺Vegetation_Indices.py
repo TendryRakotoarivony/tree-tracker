@@ -49,8 +49,7 @@ def calculate_ndvi(src):
     band_red = src.read(3)
     band_nir = src.read(4)
 
-    return (band_nir.astype(float) - band_red.astype(float)) / (band_nir +
-                                                                band_red)
+    return (band_nir.astype(float) - band_red.astype(float)) / (band_nir + band_red)
 
 
 def calculate_ndwi(src):
@@ -59,8 +58,7 @@ def calculate_ndwi(src):
     band_green = src.read(2)
     band_nir = src.read(4)
 
-    return (band_green.astype(float) - band_nir.astype(float)) / (band_green +
-                                                                  band_nir)
+    return (band_green.astype(float) - band_nir.astype(float)) / (band_green + band_nir)
 
 
 def calculate_msavi2(src):
@@ -76,15 +74,14 @@ def calculate_msavi2(src):
     # 8(ir−r)
     msavi2_second = 8 * (band_nir.astype(float) - band_red.astype(float))
 
-    return (msavi2_first -
-            np.sqrt(np.square(msavi2_first) - msavi2_second)) / 2
+    return (msavi2_first - np.sqrt(np.square(msavi2_first) - msavi2_second)) / 2
 
 
 def makeParcelNameList(df):
     parcelNameList = []
     for index, row in df.iterrows():
-        if row["plotName"] == None:
-            if row["name"] == None:
+        if row["plotName"] is None:
+            if row["name"] is None:
                 print("none")
             if len(row["name"]) == 0:
                 parcelFolder = row["folders"].split("; ")
@@ -109,45 +106,45 @@ def makeParcelNameList(df):
 def get_parcel_stats(parcel_polygon, selected_index):
     parcel_polygon = parcel_polygon.to_crs(crs=selected_index.crs)
     ndval = 1
-    #get the matrix:
+    # get the matrix:
     array = selected_index.read(1)
-    array = array.astype('float64')
+    array = array.astype("float64")
     array[array == ndval] = np.nan
 
     affine = selected_index.transform
 
-    #get the stats
-    zs_parcel_polygon = zonal_stats(parcel_polygon,
-                                    array,
-                                    affine=affine,
-                                    nodata=np.nan,
-                                    stats=['min', 'max', 'mean'])
+    # get the stats
+    zs_parcel_polygon = zonal_stats(
+        parcel_polygon, array, affine=affine, nodata=np.nan, stats=["min", "max", "mean"]
+    )
 
-    #bring the stats to the load_data function
+    # bring the stats to the load_data function
     return zs_parcel_polygon
 
 
-@st.cache
+@st.cache_data
 def load_data():
     data_path = r"data/planet"
 
     # Create a metrics dataframe
-    df_metrics = pd.DataFrame(columns=[
-        "year",
-        "month",
-        "region",
-        "NDVI_min",
-        "NDVI_max",
-        "NDVI_average",
-        "NDWI_min",
-        "NDWI_max",
-        "NDWI_average",
-        "MSAVI2_min",
-        "MSAVI2_max",
-        "MSAVI2_average",
-    ])
+    df_metrics = pd.DataFrame(
+        columns=[
+            "year",
+            "month",
+            "region",
+            "NDVI_min",
+            "NDVI_max",
+            "NDVI_average",
+            "NDWI_min",
+            "NDWI_max",
+            "NDWI_average",
+            "MSAVI2_min",
+            "MSAVI2_max",
+            "MSAVI2_average",
+        ]
+    )
     # Read all the regions
-    region_list = ['Andramasina', 'Antolojanahary']
+    region_list = ["Andramasina", "Antolojanahary"]
     for region in region_list:
         tif_path = os.path.join(data_path, region)
         file_list = glob.glob(tif_path + "/*clip.tif")
@@ -204,8 +201,8 @@ def load_data():
                 df_tmp = pd.Series(series_list, index=df_metrics.columns)
                 length_df = len(df_metrics)
                 df_metrics.loc[length_df] = df_tmp
-    df_metrics["label"] = (df_metrics["year"].map(str) + "-" +
-                           df_metrics["month"].map(str))
+
+    df_metrics["label"] = df_metrics["year"].map(str) + "-" + df_metrics["month"].map(str)
     df_metrics = df_metrics.sort_values(by=["year", "month"])
     df_metrics.reset_index(drop=True, inplace=True)
     df_metrics["NDVI_delta"] = df_metrics["NDVI_average"].diff()
@@ -222,37 +219,32 @@ gdf_BondyPlantedParcels = gpd.read_file(path_parcels)
 selected_region = st.sidebar.selectbox(
     "🌍 Regions",
     gdf_BondyPlantedParcels["regionName"].unique(),
-    help='Select region available from GeoJSON file')
+    help="Select region available from GeoJSON file",
+)
 
-rslt_df = gdf_BondyPlantedParcels[gdf_BondyPlantedParcels["regionName"].isin(
-    [selected_region])]
+rslt_df = gdf_BondyPlantedParcels[gdf_BondyPlantedParcels["regionName"].isin([selected_region])]
 list_parcels = makeParcelNameList(rslt_df)
 
 # Parcels
-selected_parcel = st.sidebar.selectbox("📍 Parcels", list_parcels)
+selected_parcel = st.sidebar.selectbox("📍 Parcels", list_parcels) or list_parcels[0]
 
 parcelID = int(selected_parcel.split(" | ")[0])
 parcel_name = selected_parcel.split(" | ")[1]
 
 head_col, metric_col, month_year_col = st.columns([5, 2, 2])
-vegetation_metric = metric_col.selectbox("🔎 Select a metric to plot",
-                                         ["NDVI", "NDWI", "MSAVI2"])
+vegetation_metric = metric_col.selectbox("🔎 Select a metric to plot", ["NDVI", "NDWI", "MSAVI2"]) or "NVDI"
 df_metrics = load_data()
-#st.dataframe(df_metrics)
+# st.dataframe(df_metrics)
 
-month_year = month_year_col.selectbox("📅 Select Month & Year",
-                                      df_metrics["label"].unique())
+month_year = month_year_col.selectbox("📅 Select Month & Year", df_metrics["label"].unique())
 head_col.header("🩺 Vegetation Indices")
 with st.spinner("Calculating indices...."):
     st.subheader(f"🇲🇬 Region: {selected_region} | {parcel_name}")
-    #st.write("Last Inspected: June 25, 2022")
+    # st.write("Last Inspected: June 25, 2022")
 
-    delta_NDVI = df_metrics[df_metrics["label"] ==
-                            month_year]["NDVI_delta"].values[0]
-    delta_NDWI = df_metrics[df_metrics["label"] ==
-                            month_year]["NDWI_delta"].values[0]
-    delta_MSAVI2 = df_metrics[df_metrics["label"] ==
-                              month_year]["MSAVI2_delta"].values[0]
+    delta_NDVI = df_metrics[df_metrics["label"] == month_year]["NDVI_delta"].values[0]
+    delta_NDWI = df_metrics[df_metrics["label"] == month_year]["NDWI_delta"].values[0]
+    delta_MSAVI2 = df_metrics[df_metrics["label"] == month_year]["MSAVI2_delta"].values[0]
 
     col_2, col_3, col_4 = st.columns(3)
 
@@ -297,15 +289,13 @@ with st.spinner("Calculating indices...."):
     fig, axes = plt.subplots(figsize=(12, 3))
     plt.fill_between(
         x=df_metrics["label"],
-        y1=df_metrics[vegetation_metric + "_min"],
-        y2=df_metrics[vegetation_metric + "_max"],
+        y1=np.array(df_metrics[f"{vegetation_metric}_min"].to_list()),
+        y2=df_metrics[f"{vegetation_metric}_max"].to_list(),
         alpha=0.2,
         color="green",
     )
-    plt.plot(df_metrics["label"],
-             df_metrics[vegetation_metric + "_average"],
-             color="green")
-    plt.xticks(rotation=45)
+    plt.plot(df_metrics["label"], df_metrics[vegetation_metric + "_average"], color="green")
+    plt.xticks(rotation=90)
     plt.title(vegetation_metric + " with time")
     plt.axvline(x=month_year, color="black", linestyle=":")
     st.pyplot(fig)
@@ -323,7 +313,7 @@ with st.spinner("Calculating indices...."):
     img = axes.imshow(
         metric_data[vegetation_metric],
         cmap="viridis",
-        interpolation='none',
+        interpolation="none",
     )
     axes.set(title=vegetation_metric)
     # axes.set_xlim([10, 20])
@@ -334,24 +324,23 @@ with st.spinner("Calculating indices...."):
     plt.grid(False)
     col_6.pyplot(fig)
 
-    map_selection = st.sidebar.selectbox('Select map area',
-                                         ['Region', 'Parcel'])
+    map_selection = st.sidebar.selectbox("Select map area", ["Region", "Parcel"])
     geodf = geodf.to_crs(3857)
     fig, ax = plt.subplots(figsize=(10, 10))
-    img = show(metric_data[vegetation_metric], cmap='viridis', aspect='auto')
-    ax.set(title='Boundary/Boundaries')
+    img = show(metric_data[vegetation_metric], cmap="viridis", aspect="auto")
+    ax.set(title="Boundary/Boundaries")
     # ax.scatter(x=[30, 40], y=[50, 60], c='r', s=40)
     geodf.plot(edgecolor="red", facecolor="None", linewidth=1, ax=ax)
 
-    if map_selection == 'Region':
+    if map_selection == "Region":
         min_x, min_y, max_x, max_y = src.bounds
     else:
         min_x, min_y, max_x, max_y = geodf.iloc[parcelID].geometry.bounds
 
-    ax.set_xlim([min_x, max_x])
-    ax.set_ylim([min_y, max_y])
+    ax.set_xlim((min_x, max_x))
+    ax.set_ylim((min_y, max_y))
     ax.invert_yaxis()
     ax.grid(False)
 
     col_5.pyplot(fig)
-    #st.write(geodf)
+    # st.write(geodf)
