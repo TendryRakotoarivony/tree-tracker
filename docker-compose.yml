@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  app:
+    image: ${AWS_ECR}/${IMAGE_NAME}:${IMAGE_VERSION}
+    ports:
+      - 80:8501
+    env_file:
+      - .env
+  
