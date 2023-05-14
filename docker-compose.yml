@@ -2,9 +2,8 @@ version: "3.8"
 
 services:
   app:
-    image: ${AWS_ECR}/${IMAGE_NAME}:${IMAGE_VERSION}
+    image: 620684953042.dkr.ecr.us-east-1.amazonaws.com/tree-tracker:1.0.0
     ports:
       - 80:8501
     env_file:
       - .env
-  
