@@ -13,11 +13,12 @@
 **/.env
 **/.aws
 **/.ssh
+Makefile
 Dockerfile
 docker-compose.yml
 **/venv
 **/env
 README.md
 
-# Artefacts
-data/
+# Python
+__pycache__/

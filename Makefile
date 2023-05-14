@@ -1,12 +1,12 @@
 include .env
-# export $(shell sed 's/=.*//' .env)
 
-AWS_REGION ?= us-east-1
+AWS_REGION ?= ""
 AWS_ECR ?= ""
+AWS_ECR_ENV ?= "prod"
 IMAGE_NAME ?= "tree-tracker"
 CONTAINER_NAME ?= "tree-tracker"
-VERSION ?= "latest"
-TAG = ${IMAGE_NAME}:${VERSION}
+IMAGE_VERSION ?= "latest"
+TAG = ${IMAGE_NAME}:${IMAGE_VERSION}
 
 run: ## Run streamlit app locally
 	streamlit run Home.py
@@ -26,7 +26,7 @@ docker-deploy: ## Rebuild docker image with a new tag and push to ECR
 	
 	docker push ${AWS_ECR}/${TAG}
 	
-	eb deploy
+	eb deploy ${AWS_ECR_ENV}
 .PHONY: rebuild
 
 
@@ -35,5 +35,4 @@ help: ## Show this help
 	@echo "\nSpecify a command. The choices are:\n"
 	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[0;36m%-12s\033[m %s\n", $$1, $$2}'
 	@echo ""
-
 .PHONY: help
