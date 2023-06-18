@@ -1,5 +1,9 @@
 # Bondy Tree Tracker App
+Madagascar is the 5️⃣th poorest country globally and faces terrific consequences due to climate change.
+With multiple parties promising to provide reforestation services comes the fact that planting trees is simple, but making sure they will grow is more complex. 
 
+For the moment, Bôndy monitors trees physically, but this is not a scalable model. 
+Together with the Omdena, a solution to combine satellite and drone imagery, meterological data, and Machine Learning a dashboard was developed to monitor plants.
 
 ## File Structure
 ```
