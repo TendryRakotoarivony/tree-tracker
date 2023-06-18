@@ -27,8 +27,6 @@ docker-deploy: ## Rebuild docker image with a new tag and push to ECR
 	docker push ${AWS_ECR}/${TAG}
 
 	$(shell sed -i '' 's/\(^ *image: *\).*/\1${AWS_ECR}\/${TAG}/' docker-compose.yml)
-	git add docker-compose.yml
-	git commit -m "autocommit: image version updated"
 
 	eb deploy ${AWS_ECR_ENV}
 .PHONY: rebuild
