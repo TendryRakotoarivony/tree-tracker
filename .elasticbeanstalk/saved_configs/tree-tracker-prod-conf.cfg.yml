@@ -1,20 +1,59 @@
 EnvironmentConfigurationMetadata:
   Description: Configuration created from the EB CLI using "eb config save".
-  DateCreated: '1684048619000'
-  DateModified: '1684048619000'
+  DateCreated: '1687175862000'
+  DateModified: '1687175862000'
 Platform:
   PlatformArn: arn:aws:elasticbeanstalk:us-east-1::platform/Docker running on 64bit
-    Amazon Linux 2/3.5.7
+    Amazon Linux 2/3.5.8
 OptionSettings:
+  AWSEBLoadBalancer.aws:elb:listener:80:
+    ListenerEnabled: true
+    InstancePort: '80'
+    ListenerProtocol: TCP
+    InstanceProtocol: TCP
+  AWSEBLoadBalancer.aws:elb:healthcheck:
+    UnhealthyThreshold: '5'
+    Timeout: '5'
+    HealthyThreshold: '3'
+    Interval: '10'
+  AWSEBAutoScalingScaleUpPolicy.aws:autoscaling:trigger:
+    UpperBreachScaleIncrement: '1'
+  AWSEBCloudwatchAlarmLow.aws:autoscaling:trigger:
+    BreachDuration: '5'
+    Statistic: Average
+    LowerThreshold: '2000000'
+    MeasureName: NetworkOut
+    Period: '5'
+    Unit: Bytes
+  AWSEBLoadBalancer.aws:elb:policies:
+    ConnectionDrainingEnabled: false
+    ConnectionDrainingTimeout: '20'
+  AWSEBLoadBalancer.aws:elb:loadbalancer:
+    CrossZone: false
+  AWSEBAutoScalingLaunchConfiguration.aws:autoscaling:launchconfiguration:
+    IamInstanceProfile: aws-elasticbeanstalk-ec2-role
+  aws:elasticbeanstalk:managedactions:
+    ManagedActionsEnabled: true
+    PreferredStartTime: MON:11:11
+  AWSEBCloudwatchAlarmHigh.aws:autoscaling:trigger:
+    UpperThreshold: '6000000'
+  aws:elasticbeanstalk:managedactions:platformupdate:
+    UpdateLevel: minor
   aws:ec2:instances:
     SpotFleetOnDemandAboveBasePercentage: '0'
-    InstanceTypes: t3.small,t3.medium
+    InstanceTypes: t3.medium,t3.large
+  aws:elb:policies:
+    Stickiness Policy: false
   AWSEBEC2LaunchTemplate.aws:autoscaling:launchconfiguration:
-    RootVolumeSize: '10'
+    RootVolumeSize: '50'
     RootVolumeType: gp3
+  AWSEBAutoScalingGroup.aws:autoscaling:asg:
+    MaxSize: '3'
+  AWSEBAutoScalingScaleDownPolicy.aws:autoscaling:trigger:
+    LowerBreachScaleIncrement: '-1'
   aws:elasticbeanstalk:environment:
     ServiceRole: arn:aws:iam::620684953042:role/aws-elasticbeanstalk-service-role
-    EnvironmentType: SingleInstance
+    EnvironmentType: LoadBalanced
   aws:elasticbeanstalk:healthreporting:system:
     ConfigDocument:
       Version: 1
@@ -57,13 +96,6 @@ OptionSettings:
     SecurityGroups: bondy-vpc-security-group
     DisableIMDSv1: true
     EC2KeyName: bondy-eb-ec2
-  AWSEBAutoScalingLaunchConfiguration.aws:autoscaling:launchconfiguration:
-    IamInstanceProfile: aws-elasticbeanstalk-ec2-role
-  aws:elasticbeanstalk:managedactions:
-    ManagedActionsEnabled: true
-    PreferredStartTime: MON:11:11
-  aws:elasticbeanstalk:managedactions:platformupdate:
-    UpdateLevel: minor
   aws:elasticbeanstalk:cloudwatch:logs:health:
     RetentionInDays: '30'
     HealthStreamingEnabled: true
