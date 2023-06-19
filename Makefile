@@ -2,7 +2,7 @@ include .env
 
 AWS_REGION ?= ""
 AWS_ECR ?= ""
-AWS_ECR_ENV ?= "prod"
+AWS_ECR_ENV ?= "tree-tracker-prod"
 IMAGE_NAME ?= "tree-tracker"
 CONTAINER_NAME ?= "tree-tracker"
 IMAGE_VERSION ?= "latest"
@@ -29,11 +29,6 @@ docker-deploy: ## Rebuild docker image with a new tag and push to ECR
 	$(shell sed -i '' 's/\(^ *image: *\).*/\1${AWS_ECR}\/${TAG}/' docker-compose.yml)
 
 	eb deploy ${AWS_ECR_ENV}
-.PHONY: rebuild
-
-test:
-	$(shell sed -i '' 's/\(^ *image: *\).*/\1${AWS_ECR}\/${TAG}/' docker-compose.yml)
-	cat docker-compose.yml
 
 
 help: ## Show this help
