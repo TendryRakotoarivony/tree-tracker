@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tree-tracker"
-version = "0.0.0"
+version = "0.0.1"
 description = "Bondy Tree Tracker App"
 authors = ["Abdulazeez Jimoh <abdulazeezojimoh@gmail.com>"]
 readme = "README.md"
