@@ -2,7 +2,7 @@ import streamlit as st
 import datetime
 import numpy as np
 import pandas as pd
-import geopandas as gpd
+import geopandas as gpd  # type: ignore
 import xarray as xr
 import matplotlib.pyplot as plt
 
