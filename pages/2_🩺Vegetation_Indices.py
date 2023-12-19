@@ -1,13 +1,14 @@
-import os
 import glob
+import os
+
+import geopandas as gpd  # type: ignore
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import rasterio  # type: ignore
 import streamlit as st
-import matplotlib.pyplot as plt
-import rasterio
-from rasterio.plot import show
-from rasterstats import zonal_stats
-import geopandas as gpd
+from rasterio.plot import show  # type: ignore
+from rasterstats import zonal_stats  # type: ignore
 
 st.set_page_config(
     layout="wide",
@@ -64,7 +65,7 @@ def calculate_ndwi(src):
 def calculate_msavi2(src):
     # Allow division by zero
     np.seterr(divide="ignore", invalid="ignore")
-    band_green = src.read(2)
+    _ = src.read(2)
     band_red = src.read(3)
     band_nir = src.read(4)
 
@@ -232,7 +233,9 @@ parcelID = int(selected_parcel.split(" | ")[0])
 parcel_name = selected_parcel.split(" | ")[1]
 
 head_col, metric_col, month_year_col = st.columns([5, 2, 2])
-vegetation_metric = metric_col.selectbox("🔎 Select a metric to plot", ["NDVI", "NDWI", "MSAVI2"]) or "NVDI"
+vegetation_metric = (
+    metric_col.selectbox("🔎 Select a metric to plot", ["NDVI", "NDWI", "MSAVI2"]) or "NVDI"
+)
 df_metrics = load_data()
 # st.dataframe(df_metrics)
 

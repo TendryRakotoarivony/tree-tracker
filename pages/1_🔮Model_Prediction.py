@@ -1,12 +1,13 @@
 import os
-import streamlit as st
-import numpy as np
-import matplotlib.pyplot as plt
-import cv2
-import onnxruntime
-from skimage.measure import label, regionprops
 
-from util import download_data
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+import onnxruntime  # type: ignore
+import streamlit as st
+from skimage.measure import label, regionprops  # type: ignore
+
+from tree_tracker.util import download_data
 
 st.set_page_config(
     layout="wide",
